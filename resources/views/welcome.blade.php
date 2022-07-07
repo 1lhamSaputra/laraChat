@@ -8,7 +8,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
-        .list-group{
+        .list-group {
             overflow-y: scroll;
             height: 200px;
         }
@@ -21,11 +21,10 @@
             <div class="row">
                 <div>
                     <li class="list-group-item active" aria-current="true">Chat Room</li>
-                    <ul class="list-group">
-                        <message v-for="value in chat.message">@{{ value }}</message>
-                        <input type="text" class="form-control" placeholder="Type your message..." v-model="message"
-                            @keyup.enter="send()">
+                    <ul class="list-group" v-chat-scroll>
+                        <message v-for="value in chat.message" :key=value.index color='warning'>@{{ value }}</message>
                     </ul>
+                    <input type="text" class="form-control" placeholder="Type your message..." v-model="message" @keyup.enter="send()">
                 </div>
             </div>
         </div>
