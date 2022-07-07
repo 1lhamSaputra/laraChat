@@ -7,21 +7,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <style>
+        .list-group{
+            overflow-y: scroll;
+            height: 200px;
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
         <div class="container">
             <div class="row">
-
-                <ul class="list-group">
+                <div>
                     <li class="list-group-item active" aria-current="true">Chat Room</li>
-                    <li class="list-group-item">A second item</li>
-                    <li class="list-group-item">A third item</li>
-                    <li class="list-group-item">A fourth item</li>
-                    <li class="list-group-item">And a fifth one</li>
-                    <input type="text" class="form-control" placeholder="Type your message..." v-model="message" @keyup.enter="send()">
-                  </ul>
+                    <ul class="list-group">
+                        <message v-for="value in chat.message">@{{ value }}</message>
+                        <input type="text" class="form-control" placeholder="Type your message..." v-model="message"
+                            @keyup.enter="send()">
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
