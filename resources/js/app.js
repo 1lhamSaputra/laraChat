@@ -32,19 +32,43 @@ Vue.component('message', require('./components/Message.vue').default);
 
 const app = new Vue({
     el: '#app',
-    data:{
-        message:'',
-        chat:{
-            message:[]
+    data: {
+        message: '',
+        chat: {
+            message: [],
+            user:[],
+            color:[]
         }
     },
-    methods:{
-        send(){
+    methods: {
+        send() {
             if (this.message.length != 0) {
                 // console.log(this.message)
                 this.chat.message.push(this.message)
-                this.message ='';
+                this.chat.user.push('you')
+                this.chat.color.push('success')
+
+                axios.post('/send', {
+                    message : this.message
+                })
+                    .then((response) => {
+                        // console.log(response, 'response')
+                        this.message = '';
+                    })
+                    .catch((error)=>{
+                        // console.log(error, 'error')
+                    });
             }
         }
+    },
+    mounted() {
+        // console.log('test')
+        Echo.private('chat')
+            .listen('ChatEvent', (e) => {
+                this.chat.message.push(e.message)
+                this.chat.user.push(e.user)
+                this.chat.color.push('warning')
+                // console.log(e);
+            });
     }
 });

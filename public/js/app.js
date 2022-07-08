@@ -5267,7 +5267,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['color'],
+  props: ['color', 'user'],
   computed: {
     className: function className() {
       return 'list-group-item-' + this.color;
@@ -5305,7 +5305,7 @@ var render = function render() {
   }, [_vm._t("default")], 2), _vm._v(" "), _c("span", {
     staticClass: "badge float-end",
     "class": _vm.badgeClass
-  }, [_vm._v("You")])]);
+  }, [_vm._v(_vm._s(_vm.user))])]);
 };
 
 var staticRenderFns = [];
@@ -5356,17 +5356,42 @@ var app = new Vue({
   data: {
     message: '',
     chat: {
-      message: []
+      message: [],
+      user: [],
+      color: []
     }
   },
   methods: {
     send: function send() {
+      var _this = this;
+
       if (this.message.length != 0) {
         // console.log(this.message)
         this.chat.message.push(this.message);
-        this.message = '';
+        this.chat.user.push('you');
+        this.chat.color.push('success');
+        axios.post('/send', {
+          message: this.message
+        }).then(function (response) {
+          // console.log(response, 'response')
+          _this.message = '';
+        })["catch"](function (error) {// console.log(error, 'error')
+        });
       }
     }
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    // console.log('test')
+    Echo["private"]('chat').listen('ChatEvent', function (e) {
+      _this2.chat.message.push(e.message);
+
+      _this2.chat.user.push(e.user);
+
+      _this2.chat.color.push('warning'); // console.log(e);
+
+    });
   }
 });
 
@@ -5405,8 +5430,8 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "",
-  cluster: "mt1",
+  key: "815cda51f4cb0e3ce68a",
+  cluster: "ap1",
   forceTLS: true
 });
 
