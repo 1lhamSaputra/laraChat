@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LoginController::class, 'login']);
 
 Route::get('/chat', [ChatController::class, 'chat']);
+Route::get('/send', [ChatController::class, 'send']);
 
 Auth::routes();
 
