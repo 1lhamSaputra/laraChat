@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "autoprefixer": "10.4.5",
+        "v-toaster": "^1.0.3",
         "vue-chat-scroll": "^2.0.0-alpha.4"
     }
 }

@@ -6,10 +6,13 @@
 
 require('./bootstrap');
 import VueChatScroll from 'vue-chat-scroll';
-
+import Vue from 'vue'
+import Toaster from 'v-toaster'
+import 'v-toaster/dist/v-toaster.css'
 
 window.Vue = require('vue').default;
 Vue.use(VueChatScroll);
+Vue.use(Toaster, {timeout: 5000})
 
 /**
  * The following block of code may be used to automatically register your
@@ -36,9 +39,12 @@ const app = new Vue({
         message: '',
         chat: {
             message: [],
-            user:[],
-            color:[]
-        }
+            user: [],
+            color: [],
+            time: []
+        },
+        typing: '',
+        numberOfUser: 0
     },
     methods: {
         send() {
@@ -47,18 +53,31 @@ const app = new Vue({
                 this.chat.message.push(this.message)
                 this.chat.user.push('you')
                 this.chat.color.push('success')
+                this.chat.time.push(this.getTime())
 
                 axios.post('/send', {
-                    message : this.message
+                    message: this.message
                 })
                     .then((response) => {
                         // console.log(response, 'response')
                         this.message = '';
                     })
-                    .catch((error)=>{
+                    .catch((error) => {
                         // console.log(error, 'error')
                     });
             }
+        },
+        getTime() {
+            let time = new Date();
+            return time.getHours() + ':' + time.getMinutes()
+        }
+    },
+    watch: {
+        message() {
+            Echo.private('chat')
+                .whisper('typing', {
+                    name: this.message
+                });
         }
     },
     mounted() {
@@ -68,7 +87,36 @@ const app = new Vue({
                 this.chat.message.push(e.message)
                 this.chat.user.push(e.user)
                 this.chat.color.push('warning')
+                this.chat.time.push(this.getTime())
                 // console.log(e);
+            })
+            .listenForWhisper('typing', (e) => {
+                if (e.name != '') {
+                    this.typing = 'typing...'
+                } else {
+                    this.typing = ''
+                }
+                console.log(e.name);
+            });
+
+        Echo.join(`chat`)
+            .here((users) => {
+                // console.log(users);
+                this.numberOfUser = users.length
+                //
+            })
+            .joining((user) => {
+                this.numberOfUser += 1;
+                this.$toaster.success(user.name+' is joined')
+                // console.log(user.name);
+            })
+            .leaving((user) => {
+                this.numberOfUser -= 1;
+                this.$toaster.warning(user.name+' is leaved')
+                // console.log(user.name);
+            })
+            .error((error) => {
+                // console.error(error);
             });
     }
 });

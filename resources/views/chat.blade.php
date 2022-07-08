@@ -20,9 +20,10 @@
         <div class="container">
             <div class="row">
                 <div>
-                    <li class="list-group-item active" aria-current="true">Chat Room</li>
+                    <li class="list-group-item active" aria-current="true">Chat Room <small class="badge badge-pill bg-info">@{{ numberOfUser }}</small></li>
+                    <div class="badge badge-pill bg-primary">@{{ typing }}</div>
                     <ul class="list-group" v-chat-scroll>
-                        <message v-for="value,index in chat.message" :key=value.index :user=chat.user[index] :color=chat.color[index]>@{{ value }}</message>
+                        <message v-for="value,index in chat.message" :key=value.index :user=chat.user[index] :color=chat.color[index] :time=chat.time[index]>@{{ value }}</message>
                     </ul>
                     <input type="text" class="form-control" placeholder="Type your message..." v-model="message" @keyup.enter="send()">
                 </div>
